@@ -1,0 +1,215 @@
+package com.gssx.backstageServlet;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.gssx.dao.IBannerImgDao;
+import com.gssx.dao.impl.BannerDaoImpl;
+import com.gssx.entity.BannerImgEnt;
+import com.gssx.util.DBUtils;
+import com.gssx.util.UploadUtil;
+
+public class BannerImgServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	//获取接口 对象
+	IBannerImgDao banDao = new BannerDaoImpl();
+	//接收客户端的get方式请求
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    doPost(request, response);
+	}
+    //Post 请求执行方法
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//中文编码处理
+		request.setCharacterEncoding("utf-8");
+		response.setCharacterEncoding("utf-8");
+		
+		//接收 参数 调用指定方法
+		String op = request.getParameter("op");
+		//判断
+		if (("queryBanner").equals(op)) {
+			queryBanner(request, response);
+		}else if(("updateBan").equals(op)) {
+			updateBan(request, response);
+		}else if(("queryById").equals(op)) {
+			queryById(request, response);
+		}else if(("deleteBan").equals(op)) {
+			deleteBan(request, response);
+		}else if(("banAdd").equals(op)) {
+			banAdd(request, response);
+		}else if(("saveBanner").equals(op)) {
+			saveBanner(request, response);
+		}
+	}
+	/**
+	 * 查询图片列表
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void queryBanner(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		//创建条件 对象
+		BannerImgEnt banEnt =new BannerImgEnt();
+		//调用查询方法
+		List<BannerImgEnt> list = banDao.queryList(banEnt);
+		//将查询出来的结果 存入到作用域中
+		request.setAttribute("list", list);
+		request.getRequestDispatcher("/backstage/banner.jsp").forward(request, response);
+	}
+	/**
+	 * 修改图片信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void updateBan(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		//获取 需要修改的数据
+		//String bannerId = request.getParameter("bannerId");
+		//String bannerName = request.getParameter("bannerName");
+		//String bannerImg = request.getParameter("bannerImg");
+		UploadUtil uploadUtil = new UploadUtil();
+
+		HashMap<String, String> map = uploadUtil.upload(request);
+		
+		
+		//封装 到 对象实体中
+		BannerImgEnt banEnt = new BannerImgEnt(
+				Integer.parseInt(map.get("bannerId")),
+				map.get("bannerName"),
+				map.get("bannerImg"));
+		
+		//调用修改方法
+		boolean bool = banDao.updateBan(banEnt);
+		if(bool) {
+			//刷新 列表界面
+			queryBanner(request, response);
+		}else {
+			
+		}
+	}
+	/**
+	 * 通过ID 查询对象
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void queryById(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		//获取ID值
+		String bannerId = request.getParameter("bannerId");
+		BannerImgEnt banEnt = banDao.queryById(Integer.parseInt(bannerId));
+		//存入 作用域 跳转到修改界面
+		request.setAttribute("banEnt", banEnt);
+		request.getRequestDispatcher("/backstage/banner.jsp").forward(request, response);
+	}
+
+	  /**
+	   * 刪除图片信息
+	   * @param request
+	   * @param response
+	   * @throws ServletException
+	   * @throws IOException
+	   */
+	public void deleteBan(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		//获取ID
+		String bannerId =request.getParameter("bannerId");
+		//调用删除 方法
+		boolean bool =	banDao.deleteBan(Integer.parseInt(bannerId));
+		
+		//判断跳转
+		if (bool) {
+			//删除成功后 重新加载 列表界面
+			queryBanner(request, response);
+		}else {
+			//删除失败 界面...
+		}
+
+	}
+	/**
+	 * 添加图片信息
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void banAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	    	//获得添加的参数
+	    	String bannerName = request.getParameter("bannerName");
+	    	String bannerImg = request.getParameter("bannerImg");
+	    	
+	    	//调用 dao层的添加 数据 方法
+	    	BannerImgEnt banEnt = new BannerImgEnt();
+	    	//数据类型转换
+	    	banEnt.setBannerName(bannerName);
+	    	banEnt.setBannerImg(bannerImg);
+	    	boolean bool = banDao.saveBan(banEnt);
+	    	if (bool) {
+	    		//跳转 传递到jsp 界面 渲染数据(跳转 分为内部跳转：【可以传递参数】  和  外部 跳转 【数据丢失】);
+	    		request.getRequestDispatcher("/backstage/banner.jsp").forward(request, response);
+			}else {
+	    		request.getRequestDispatcher("/error.jsp").forward(request, response);
+			}
+	    	
+	    }
+	    
+	public void saveBanner(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		UploadUtil uploadUtil = new UploadUtil();
+
+		HashMap<String, String> map = uploadUtil.upload(request);
+		// 设置响应数据的 内容 类型
+		response.setContentType("text/html;charset=utf-8");
+		// 将返回的图片 名称 存入数据库中
+		// 获取数据 库链接 公共类
+		DBUtils db = new DBUtils();
+		// 定义链接对象
+		Connection conn = null;
+		// 定义预编译类
+		PreparedStatement ps = null;
+		// 定义取出数据的 结果集
+		ResultSet rs = null;
+		// 成功 失败状态
+		boolean bool = false;
+		// 定义 需要执行的sql 语句
+		String sql = "insert into bannerImg(bannerName,bannerImg)" + " VALUES (?,?)";
+		// 链接数据库 预编译执行
+		conn = db.conn();
+		try {
+			ps = conn.prepareStatement(sql);
+			// 赋值
+			ps.setString(1, map.get("bannerName"));
+			ps.setString(2, map.get("bannerImg"));
+			/*
+			 * ps.setString(4, cusEnt.getEmail()); ps.setInt(5, cusEnt.getAddress_id());
+			 * ps.setInt(6, cusEnt.getActive()); ps.setString(7, cusEnt.getCreate_date());
+			 * ps.setString(8, cusEnt.getLast_update());
+			 */
+			// 判断是否 执行成功
+			int upNum = ps.executeUpdate();
+			if (upNum > 0) {
+				bool = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		response.getWriter().println(map.toString());
+		queryBanner(request, response);
+		
+	}
+
+}

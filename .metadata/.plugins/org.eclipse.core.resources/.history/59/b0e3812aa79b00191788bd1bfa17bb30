@@ -1,0 +1,67 @@
+package com.gssx.Servlet;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.gssx.dao.IAdminDao;
+import com.gssx.dao.impl.AdminImpl;
+import com.gssx.entity.AdminEnt;
+
+public class AdminServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	// 获得 和 数据库 交互的 dao层对象
+	IAdminDao admDao = new AdminImpl();
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 处理中文乱码
+		request.setCharacterEncoding("utf-8");
+		response.setCharacterEncoding("utf-8");
+
+		// 获取一个参数 指定 需要被调用的方法
+		String op = request.getParameter("op");
+		// 判断login
+		if ("login".equals(op)) {
+			login(request, response);
+		} else if ("cusAdd".equals(op)) {
+			// cusAdd(request, response);
+		} else if ("cusList".equals(op)) {
+			// queryListMap(request, response);
+		}
+	}
+
+	/**
+	 * 登录方法
+	 */
+	public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//接收客户端传递的参数
+		String adm_name = request.getParameter("adm_name");
+		String adm_pwd = request.getParameter("adm_pwd");
+
+//封装实体参数
+		AdminEnt admEnt = new AdminEnt();
+		admEnt.setLoginName(adm_name);
+		admEnt.setLoginPwd(adm_pwd);
+//调用方法 进行查询操作
+		AdminEnt retAdm = admDao.queryAdm(admEnt);
+//判断
+		if (retAdm != null) {
+			// 存入作用域中
+			request.setAttribute("retAdm", retAdm);
+			// 跳转 传递到jsp 界面 渲染数据(跳转 分为内部跳转：【可以传递参数】 和 外部 跳转 【数据丢失】);
+			request.getRequestDispatcher("/backstage/index.jsp").forward(request, response);
+		} else {
+			//返回父页面
+			response.getWriter().print("<script>window.parent.location.href='backstage/log.jsp';</script>");
+			//response.sendRedirect("${pageContext.request.contextPath }/backstage/log.jsp");
+		}
+	}
+
+}

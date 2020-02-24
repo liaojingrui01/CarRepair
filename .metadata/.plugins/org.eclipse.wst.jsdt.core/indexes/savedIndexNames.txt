@@ -1,0 +1,10 @@
+INDEX VERSION 1.4+E:\study\CAR\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+306595747.index
+608796428.index
+2745235141.index
+1463540739.index
+3300035077.index
+1916821832.index
+3834637855.index
+354962875.index
+3183863458.index

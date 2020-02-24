@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+  <display-name>CarWebPro</display-name>
+<!--后台管理映射  -->  
+    <!--轮播图映射  -->
+  <servlet>
+    <servlet-name>BanServlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.BannerImgServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BanServlet</servlet-name>
+    <url-pattern>/BanUrl</url-pattern>
+  </servlet-mapping>
+  
+    <!-- 图片上传映射 -->
+  <servlet>
+    <servlet-name>UpServlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.UpFileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UpServlet</servlet-name>
+    <url-pattern>/UpFileServlet</url-pattern>
+  </servlet-mapping>
+  
+    <!-- 用户管理映射 -->
+  <servlet>
+    <servlet-name>admSerlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.AdminServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>admSerlet</servlet-name>
+    <url-pattern>/admUrl</url-pattern>
+  </servlet-mapping>
+  
+    <!--预约映射  -->
+  <servlet>
+    <servlet-name>AppSerlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.AppServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AppSerlet</servlet-name>
+    <url-pattern>/AppUrl</url-pattern>
+  </servlet-mapping>
+  
+    <!-- 汽车类型映射 -->
+  <servlet>
+    <servlet-name>CarServlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.CarServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CarServlet</servlet-name>
+    <url-pattern>/CarUrl</url-pattern>
+  </servlet-mapping>
+  
+    <!-- 库存管理映射 -->
+  <servlet>
+    <servlet-name>StockServlet</servlet-name>
+    <servlet-class>com.gssx.backstageServlet.StockServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>StockServlet</servlet-name>
+    <url-pattern>/StoUrl</url-pattern>
+  </servlet-mapping>
+  
+<!--前台映射  -->
+	<!--首页映射  -->
+  <servlet>
+    <servlet-name>indexServlet</servlet-name>
+    <servlet-class>com.gssx.officialServlet.IndexServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>indexServlet</servlet-name>
+    <url-pattern>/indexUrl</url-pattern>
+  </servlet-mapping> 
+   
+<!--预约映射  -->
+<servlet>
+    <servlet-name>QiantaiSerlet</servlet-name>
+    <servlet-class>com.gssx.officialServlet.qiantaiyuyueServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QiantaiSerlet</servlet-name>
+    <url-pattern>/QiantaiUrl</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

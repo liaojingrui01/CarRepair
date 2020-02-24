@@ -1,0 +1,200 @@
+package com.gssx.dao.impl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.gssx.dao.INewsDao;
+import com.gssx.entity.NewsEnt;
+import com.gssx.util.DBUtils;
+
+public class NewsImpl  implements  INewsDao{
+	
+	DBUtils db = new DBUtils();
+
+	@Override
+	public boolean saveCus(NewsEnt appEnt) {
+		Connection conn = null;
+		//定义预编译类
+		PreparedStatement ps = null;
+		//定义取出数据的 结果集
+		ResultSet rs = null;
+		//成功 失败状态
+		boolean bool = false;
+		//定义 需要执行的sql 语句
+		String sql = "INSERT INTO news (tiltle, countent, releaseTime, staffId)\r\n" + 
+				"VALUES (?,?,?,?)";
+		//链接数据库 预编译执行
+		conn = db.conn();
+		try {
+			ps = conn.prepareStatement(sql);
+			//赋值
+			ps.setString(1, appEnt.getTiltle());
+			ps.setString(2, appEnt.getCountent());
+			ps.setString(3, appEnt.getReleaseTime());
+			ps.setInt(4, appEnt.getStaffId());
+			
+			//判断是否 执行成功
+			int upNum = ps.executeUpdate();
+			if(upNum>0) {
+				bool = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return bool;
+	}
+
+	@Override
+	public boolean deleteCus(int newsId) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+		String sql = "delete from news where newsId=?";
+		boolean bool = false;
+		//获得链接 执行修改操作
+		conn = db.conn();
+		try {
+			//预编译 
+			ps = conn.prepareStatement(sql);
+			// 给sql语句 的问号 赋值
+			ps.setInt(1, newsId);
+			//执行 修操作
+			int renum = ps.executeUpdate();
+			if (renum>0) {
+				bool = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return bool;
+	}
+
+	@Override
+	public boolean updateCus(NewsEnt newsEnt) {
+		Connection conn = null;
+		PreparedStatement ps = null;
+		
+
+		
+		String sql = "update news set \r\n" + 
+				"    tiltle =?,\r\n" + 
+				"		countent =?,\r\n" + 
+				"		releaseTime=?,\r\n" + 
+				"		staffId =? WHERE newsId=?";
+		
+		boolean bool = false;
+		
+		//获得链接 执行修改操作
+		conn = db.conn();
+		
+		try {
+			//预编译 
+			ps = conn.prepareStatement(sql);
+			// 给sql语句 的问号 赋值
+			ps.setString(1, newsEnt.getTiltle());
+			ps.setString(2, newsEnt.getCountent());
+			ps.setString(3, newsEnt.getReleaseTime());
+			ps.setInt(4, newsEnt.getStaffId());
+			
+			ps.setInt(5, newsEnt.getNewsId());
+			
+			//执行 修操作
+			int renum = ps.executeUpdate();
+			if (renum>0) {
+				bool = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return bool;
+	}
+
+	
+	public List<NewsEnt> queryList(NewsEnt newsEnt) {
+		//定义接口变量
+				Connection conn = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				//定义sql语句
+				String sql = "select * from news";
+				//定义返回的数据集合
+				List<NewsEnt> list = new ArrayList<NewsEnt>();
+				//开始连接查询
+				conn =	db.conn();
+				try {
+					ps = conn.prepareStatement(sql);
+					//赋值操作
+					//ps.setString(parameterIndex, x);
+					//执行操作
+					rs = ps.executeQuery();
+					while(rs.next()) {
+						//将查询的数据 存入 cusent对象中
+				
+
+						NewsEnt cusent = new NewsEnt(
+								rs.getInt("newsId"),  
+								 rs.getString("tiltle"),  
+								 rs.getString("countent"), 
+								 rs.getString("releaseTime"), 
+								 rs.getInt("staffId")
+								 );
+						//将map对象 存入 list 集合中;
+						list.add(cusent);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}finally {
+					db.closeDB(rs, ps, conn);
+				}
+				//返回 结果集
+				return list;
+	}
+
+	@Override
+		public NewsEnt queryById(int newsId) {
+		//定义接口对象
+				Connection conn = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				//定义返回的对象 
+				NewsEnt newsEnt = null;
+				
+				//定义执行的sql语句
+				StringBuffer sb = new StringBuffer();
+				sb.append("select * from news where newsId=?");
+				//添加其他条件
+				//sb.append(" and .......");
+				//通过工具类 获得对象
+				conn=db.conn();	
+				
+				try {
+					 //赋值给预编译对象
+					 ps = ((java.sql.Connection) conn).prepareStatement(sb.toString());
+					 //预编译对象 再给查询条件 赋值
+					 ps.setInt(1, newsId);
+					 //执行查询操作
+					 rs=ps.executeQuery();
+					 //取出  结果集中的第一条数据
+					 if(rs.first()) {
+						//对象赋值
+						 newsEnt = new NewsEnt(rs.getInt(newsId), 
+								                 rs.getString("tiltle"),
+								                 rs.getString("countent"),
+												 rs.getString("releaseTime"), 
+												 rs.getInt("staffId"));
+					 	}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				return  newsEnt;
+	}
+
+	
+}

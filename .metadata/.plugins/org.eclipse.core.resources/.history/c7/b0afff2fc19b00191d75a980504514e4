@@ -1,0 +1,75 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>轮播图</title>
+<link rel="stylesheet" type="text/css" href="./css/css.css" />
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+</head>
+<body>
+	<div id="pageAll">
+		<div class="pageTop">
+			<div class="page">
+				<img src="./img/coin02.png" /><span><a href="./#">首页</a>&nbsp;-&nbsp;<a
+					href="./#">轮播图管理</a>&nbsp;-</span>&nbsp;图片修改
+			</div>
+		</div>
+		<div class="page " >
+			<!-- 上传广告页面样式 -->
+			<div class="banneradd bor">
+				<div class="baTop">
+					<span>上传图片</span>
+				</div>
+				
+				
+						<form action="pageser?op=updateCus" method="post">
+			<!-- 隐藏 传递参数 的表单元素 -->
+			<input type ="hidden" name="customer_id" value="${cusEnt.customer_id }"/> <br/>
+		
+			
+			
+			first_name :<input type ="text" name="first_name" value="${cusEnt.first_name }"/> <br/>
+			last_name  :<input type ="text" name="last_name" value="${cusEnt.last_name }"/> <br/>
+			email      :<input type ="text" name="email" value="${cusEnt.email }"/> <br/>
+			
+			create_date:<input type ="text" name="create_date" value="${cusEnt.create_date }"/> <br/>
+			last_update:<input type ="text" name="last_update" value="${cusEnt.last_update }"/> <br/>
+			
+			<button type="submit">提交数据</button>||<button type="reset">重置</button>
+			
+		</form>
+				
+				
+				<form action="${pageContext.request.contextPath }/BanUrl?op=updateBan" method="post"  enctype="multipart/form-data" >
+				<div class="baBody" >
+					<div class="bbD">
+						图片名称：<input type="text" name="bannerName" value="${banEnt.bannerName }">
+					</div>
+					<div class="bbD">
+						图片：
+						<input type="file" name="bannerImg" value="${banEnt.bannerImg }">
+						<!-- <div class="bbDd">
+							<div class="bbDImg">+</div>
+						</div> -->
+					</div>
+					<div class="bbD">
+						
+							<button type="submit" class="btn_ok btn_yes" >提交</button>
+							<a class="btn_ok btn_no" href="./#">取消</a>
+						<p class="bbDP"></p>
+					</div>
+				</div>
+				</form>
+			</div>
+			
+			<hr/>
+			
+
+			<!-- 上传广告页面样式end -->
+		</div>
+	</div>
+</body>
+</html>
